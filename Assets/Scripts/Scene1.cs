@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 using TMPro;
 using UnityEngine.SceneManagement;
 
@@ -12,12 +13,15 @@ public class Scene1 : MonoBehaviour
 {
     public static Scene1 Instance;
     public TMP_InputField inputField;
+    public TextMeshProUGUI bestPlayerScore;
 
-    public GameObject gameManager;
+
+    
 
     public string playerName;
-   
 
+    private string bestPlayer;
+    private int bestScore;
 
     private void Start()
     {
@@ -25,6 +29,7 @@ public class Scene1 : MonoBehaviour
     }
     private void Awake()
     {
+        
         if (Instance != null)
         {
             Destroy(gameObject);
@@ -41,7 +46,13 @@ public class Scene1 : MonoBehaviour
 
     }
 
-  
+    private void Update()
+    {
+        LoadBestScore();
+        bestPlayerScore.text = "Best Score: " + bestPlayer + " : " + bestScore;
+    }
+
+
     public void SetPlayerName()
     {
         playerName = inputField.text;
@@ -74,4 +85,26 @@ public class Scene1 : MonoBehaviour
 
     //    File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
     //}
+
+    [System.Serializable]
+    class SaveData
+    {
+        public int best_Points;
+        public string best_Player;
+    }
+    public void LoadBestScore()
+    {
+        string path = Application.persistentDataPath + "/savefile.json";
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            SaveData data = JsonUtility.FromJson<SaveData>(json);
+            bestScore = data.best_Points;
+            bestPlayer = data.best_Player;
+
+        }
+
+    }
+
+
 }

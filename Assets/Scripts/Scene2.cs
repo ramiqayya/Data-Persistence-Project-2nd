@@ -6,18 +6,20 @@ using UnityEngine.SceneManagement;
 
 public class Scene2 : MonoBehaviour
 {
-    public TextMeshProUGUI displayPlayer;
+    //public TextMeshProUGUI displayPlayer;
 
 
 
-    public void Awake()
-    {
-        displayPlayer.text ="Best Score:Name: " +Scene1.Instance.playerName;
-    }
+    //public void Awake()
+    //{
+    //    displayPlayer.text ="Best Score:Name: " +Scene1.Instance.playerName;
+    //}
 
     public void BackToMenu()
     {
         SceneManager.LoadScene(0);
         Scene1.Instance.gameObject.SetActive(true);
     }
+
+    
 }
