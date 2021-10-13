@@ -22,13 +22,14 @@ public class MainManager : MonoBehaviour
     private bool m_GameOver = false;
 
     public TextMeshProUGUI bestScore;
-    public int highScore;
+    public int score;
+    public string bestPlayer;
+    
 
     
     // Start is called before the first frame update
     void Start()
     {
-
         
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
@@ -61,26 +62,39 @@ public class MainManager : MonoBehaviour
                 Ball.AddForce(forceDir * 2.0f, ForceMode.VelocityChange);
 
                 LoadBestScore();
-                bestScore.text = "Best Score: " + Scene1.Instance.playerName+ " " + highScore;
-                m_Points = 0;
+                // LoadBestScorePlayer();
+               // bestPlayer = Scene1.Instance.playerName;
+                bestScore.text = "Best Score: " + bestPlayer + " " + score;
+
             }
         }
         else if (m_GameOver)
         {
+            if (m_Points > score)
+            {
+                bestPlayer = Scene1.Instance.playerName;
+                SaveBestScore();
+               
+            }
+            
+           // SaveBestScorePlayer();
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-                 if(highScore>m_Points)
-                  SaveBestScore();
-                
+
+
             }
         }
+
+        Debug.Log("Score:  " + score + " and Best Player" + bestPlayer);
+
     }
 
     void AddPoint(int point)
     {
         m_Points += point;
         ScoreText.text = $"Score : {m_Points}";
+        
     }
 
     public void GameOver()
@@ -93,6 +107,7 @@ public class MainManager : MonoBehaviour
     class SaveData
     {
         public int best_Points;
+        public string best_Player;
     }
 
     public void SaveBestScore()
@@ -100,9 +115,10 @@ public class MainManager : MonoBehaviour
         SaveData data = new SaveData();
         
             data.best_Points = m_Points;
+        data.best_Player = bestPlayer;
 
             string json = JsonUtility.ToJson(data);
-
+        Debug.Log(json);
             File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
         
         
@@ -115,11 +131,33 @@ public class MainManager : MonoBehaviour
         {
             string json = File.ReadAllText(path);
             SaveData data = JsonUtility.FromJson<SaveData>(json);
-            highScore = data.best_Points;
+            score = data.best_Points;
+            bestPlayer = data.best_Player;
 
-            
         }
         
     }
 
+    //public void SaveBestScorePlayer()
+    //{
+    //    SaveData data = new SaveData();
+
+    //    data.best_Player = bestPlayer;
+
+    //    string json = JsonUtility.ToJson(data);
+
+    //    File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
+    //}
+
+    //public void LoadBestScorePlayer()
+    //{
+    //    string path = Application.persistentDataPath + "/savefile.json";
+    //    if (File.Exists(path))
+    //    {
+    //        string json = File.ReadAllText(path);
+    //        SaveData data = JsonUtility.FromJson<SaveData>(json);
+    //        bestPlayer = data.best_Player;
+    //    }
+
+    //}
 }
