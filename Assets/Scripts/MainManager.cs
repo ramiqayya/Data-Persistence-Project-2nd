@@ -86,14 +86,14 @@ public class MainManager : MonoBehaviour
             }
         }
 
-        Debug.Log("Score:  " + score + " and Best Player" + bestPlayer);
+        
 
     }
 
     void AddPoint(int point)
     {
         m_Points += point;
-        ScoreText.text = $"Score : {m_Points}";
+        ScoreText.text = Scene1.Instance.playerName + $" Score : {m_Points}";
         
     }
 
