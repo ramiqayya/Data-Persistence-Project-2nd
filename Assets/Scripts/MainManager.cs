@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.IO;
+using TMPro;
+
 
 public class MainManager : MonoBehaviour
 {
@@ -18,10 +21,15 @@ public class MainManager : MonoBehaviour
     
     private bool m_GameOver = false;
 
+    public TextMeshProUGUI bestScore;
+    public int highScore;
+
     
     // Start is called before the first frame update
     void Start()
     {
+
+        
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -51,6 +59,10 @@ public class MainManager : MonoBehaviour
 
                 Ball.transform.SetParent(null);
                 Ball.AddForce(forceDir * 2.0f, ForceMode.VelocityChange);
+
+                LoadBestScore();
+                bestScore.text = "Best Score: " + Scene1.Instance.playerName+ " " + highScore;
+                m_Points = 0;
             }
         }
         else if (m_GameOver)
@@ -58,6 +70,9 @@ public class MainManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                 if(highScore>m_Points)
+                  SaveBestScore();
+                
             }
         }
     }
@@ -73,4 +88,38 @@ public class MainManager : MonoBehaviour
         m_GameOver = true;
         GameOverText.SetActive(true);
     }
+
+    [System.Serializable]
+    class SaveData
+    {
+        public int best_Points;
+    }
+
+    public void SaveBestScore()
+    {
+        SaveData data = new SaveData();
+        
+            data.best_Points = m_Points;
+
+            string json = JsonUtility.ToJson(data);
+
+            File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
+        
+        
+    }
+
+    public void LoadBestScore()
+    {
+        string path = Application.persistentDataPath + "/savefile.json";
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            SaveData data = JsonUtility.FromJson<SaveData>(json);
+            highScore = data.best_Points;
+
+            
+        }
+        
+    }
+
 }
