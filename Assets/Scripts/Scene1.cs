@@ -61,6 +61,11 @@ public class Scene1 : MonoBehaviour
            
     }
 
+    public void ResetData()
+    {
+        SaveBestScore();
+    }
+
     public void Exit()
     {
 #if UNITY_EDITOR
@@ -103,6 +108,22 @@ public class Scene1 : MonoBehaviour
             bestPlayer = data.best_Player;
 
         }
+
+    }
+
+    public void SaveBestScore()
+    {
+        SaveData data = new SaveData();
+
+        //data.best_Points = m_Points;
+        //data.best_Player = bestPlayer;
+        data.best_Points = 0;
+        data.best_Player = null;
+
+        string json = JsonUtility.ToJson(data);
+        Debug.Log(json);
+        File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
+
 
     }
 
